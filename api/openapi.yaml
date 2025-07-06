@@ -1,0 +1,556 @@
+openapi: 3.0.1
+info:
+  description: "<p> Gridy ID is a Multi-Factor authentication (MFA) API service &\
+    \ Authenticator application for Android, IOS, Windows, MacOS, Linux & Web . </p>\
+    \ <p>Use Gridy to replace your existing username/password authentication or Integrate\
+    \ Gridy ID into your adaptive authentication workflow in minutes using our API\
+    \ service and clients</p><p>When using the API Explorer, you will need to use\
+    \ the HMAC tool to generate the required headers for each request. <p>"
+  title: Gridy ID API
+externalDocs:
+  url: https://gridy.io/docs/v1
+servers:
+- url: https://api.gridy.io
+- url: https://uat.gridy.io
+security:
+- GridyHmacAuth: []
+- x-gridy-apiuser: []
+- x-gridy-utctime: []
+- x-gridy-cnonce: []
+tags:
+- description: "Send, Verify & Check Status of Gridy ID MFA challenges"
+  name: Gridy ID Service
+paths:
+  /v1/svc/challenge:
+    post:
+      operationId: challenge
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            examples:
+              Send:
+                description: Send
+                summary: Send Challenge
+                value: "{ \n \"id\":< Your own reference >,\n \"utctime\": <UTC Timestamp>,\n\
+                  \ \"apiUser\":< Your Api User ID >,\n \"type\":150,\n \"body\":{\n\
+                  \   \"gridyUser\":<User Email Address>,\n   \"challengeType\"\
+                  :<\"UserKeyAndPattern\"|\"UserKeyPatternAndPin\"|\"UserKeyAndUserPin\"\
+                  |\"UserKeyAndUserFace\"|\"UserKeyAndUserVoice\" >,\n   \"challengeExpiry\"\
+                  :<\"ThreeMins\"|\"FiveMins\"|\"TenMins\"|\"FifteenMins\"|\"ThirtyMins\"\
+                  |\"SixtyMins\">,\n   \"enableQRCode\":<true|false>,\n   \"enableAutoVerify\"\
+                  :<true|false>,\n   \"profile\":\"<Your Assigned User Profile Reference>\"\
+                  ,\n   \"status\":\"NEW\"\n }\n}"
+              Cancel:
+                description: Cancel
+                summary: Cancel Challenge
+                value: "{ \n \"id\":< Your own reference >,\n \"utctime\":<UTC Timestamp>,\n\
+                  \ \"apiUser\":< Your Api User ID >,\n \"type\":151,\n\"body\": {\n\
+                  \   \"challengeId\":<User Gridy Challenge ID>,\n   \"gridyUser\"\
+                  :<User Email Address>,\n   \"status\":\"CANCEL\"\n\
+                  \ }\n}"
+            schema:
+              $ref: '#/components/schemas/ApiRequest'
+        description: The JSON body of the request. Contains the Gridy ID challenge
+          request.
+        required: true
+      responses:
+        "202":
+          content:
+            application/json; charset=utf-8:
+              examples:
+                Accepted:
+                  description: Accepted
+                  summary: Challenge Accepted
+                  value: "{ \n\"id\":< Our reference >,\n\"utctime\":<UTC Timestamp>,\n\
+                    \"status\":202,\n\"code\":2025,\n\"message\":{ \n\t\"challengeId\"\
+                    :\"<User Gridy Challenge ID>\",\n\t\"challengeQRcodeUrl\":\"<User\
+                    \ Gridy Challenge QR code URL>\",\n\t\"challengeQRcode\":\"data:image/png;base64,<\
+                    \ User Base64Encoded Challenge QR code Image >\" \n}\n\"moreinfo\"\
+                    :\"https://support.gridy.io/status?code=2025\" \n}"
+                Cancelled:
+                  description: Cancelled
+                  summary: Challenge Cancelled
+                  value: "{ \n\"id\":< Your reference >,\n\"utctime\":<UTC Timestamp>,\n\
+                    \"status\":202,\n\"code\":2028,\n\"message\":{\"status\":\"CANCELLED\"\
+                    }\n\"moreinfo\":\"https://support.gridy.io/status?code=2028\"\
+                    \ \n}"
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: "<p style=\"font-family: 'Montserrat'; font-size: 15px;\">\
+            \ Accepted - Your Gridy ID API request has been accepted.</p><p style=\"\
+            font-family: 'Montserrat'; font-size: 14px;\"> See list of all API status\
+            \ codes below: </p><p style=\"font-family: 'Montserrat'; font-size: 13px;\"\
+            >  &emsp; <a href=\"\"> 2025 </a> &emsp; New Gridy ID Challenge Accepted\
+            \ <br> &emsp; <a href=\"\"> 2028 </a> &emsp; New Gridy ID Challenge Cancelled"
+        "400":
+          content:
+            application/json; charset=utf-8:
+              examples:
+                Bad Request:
+                  description: Bad Request
+                  value: "{ \n\"id\":< Our reference >,\n\"utctime\":<UTC Timestamp>,\n\
+                    \"status\":400,\n\"code\":<error code>,\n\"message\":<error message>\n\
+                    \"moreinfo\":\"https://support.gridy.io/error?code=<error code>\"\
+                    \ \n}"
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: "<p style=\"font-family: 'Montserrat'; font-size: 15px;\">\
+            \ Bad Request - Your Gridy ID API request was rejected. </p><p style=\"\
+            font-family: 'Montserrat'; font-size: 14px;\"> See list of all API status\
+            \ codes below: </p><p style=\"font-family: 'Montserrat'; font-size: 13px;\"\
+            >   <a href=\"\"> -4004 </a> &emsp;HTTP Header x-gridy-utctime missing\
+            \  &emsp;<br> <a href=\"\"> -4005 </a> &emsp;HTTP Header x-gridy-utctime\
+            \ format error  &emsp;<br> <a href=\"\"> -4006 </a> &emsp;HTTP Header\
+            \ x-gridy-nonce missing  &emsp;<br> <a href=\"\"> -4007 </a> &emsp;HTTP\
+            \ Header x-gridy-nonce format error  &emsp;<br> <a href=\"\"> -4008 </a>\
+            \ &emsp;HTTP Header x-gridy-apiuser missing error  &emsp;<br> <a href=\"\
+            \"> -4009 </a> &emsp;HTTP Header x-gridy-apiuser format error  &emsp;<br>\
+            \ <a href=\"\"> -4000 </a> &emsp;HTTP Authorization Header missing  &emsp;<br>\
+            \ <a href=\"\"> -4001 </a> &emsp;HTTP Authorization Header format error\
+            \  &emsp;<br> <a href=\"\"> -4026 </a> &emsp;HTTP Authorization Header\
+            \ HMAC signature missing  &emsp;<br> <a href=\"\"> -4027 </a> &emsp;HTTP\
+            \ Authorization Header HMAC signature format error  &emsp;<br> <a href=\"\
+            \"> -4028 </a> &emsp;HTTP Authorization Header HMAC apiuser missing error\
+            \  &emsp;<br> <a href=\"\"> -4029 </a> &emsp;HTTP Authorization Header\
+            \ HMAC apiuser format error  &emsp;<br> <a href=\"\"> -4030 </a> &emsp;HTTP\
+            \ Authorization Header HMAC algorithm missing error  &emsp;<br> <a href=\"\
+            \"> -4031 </a> &emsp;HTTP Authorization Header HMAC algorithm format error\
+            \  &emsp;<br> <a href=\"\"> -4032 </a> &emsp;HTTP Authorization Header\
+            \ HMAC headers missing error  &emsp;<br> <a href=\"\"> -4033 </a> &emsp;HTTP\
+            \ Authorization Header HMAC headers format error  &emsp;<br> <a href=\"\
+            \"> -4034 </a> &emsp;HTTP Authorization Header HMAC nonce reused error\
+            \  &emsp;<br> <a href=\"\"> -4035 </a> &emsp;HTTP Authorization Header\
+            \ HMAC timestamp reused error  &emsp;<br> <a href=\"\"> -4036 </a> &emsp;HTTP\
+            \ Authorization Header HMAC utctime clock drift error  &emsp;<br> <a href=\"\
+            \"> -4037 </a> &emsp;HTTP Authorization Header HMAC signature error  &emsp;<br>\
+            \ <a href=\"\"> -1001 </a> &emsp;API User validation error  &emsp;<br>\
+            \ <a href=\"\"> -1003 </a> &emsp;API User validation error  &emsp;<br>\
+            \ <a href=\"\"> -1026 </a> &emsp;API User permissions error  &emsp;<br>\
+            \ <a href=\"\"> -6021 </a> &emsp;API request blocked - IP address location\
+            \ blocked based on user defined rules  &emsp;<br> <a href=\"\"> -2003\
+            \ </a> &emsp;Account validation error  &emsp;<br> <a href=\"\"> -2004\
+            \ </a> &emsp;Account blocked  &emsp;<br> <a href=\"\"> -2005 </a> &emsp;Account\
+            \ too many failed attempts  &emsp;<br> <a href=\"\"> -2006 </a> &emsp;Account\
+            \ locked  &emsp;<br> <a href=\"\"> -2007 </a> &emsp;Account disabled \
+            \ &emsp;<br> <a href=\"\"> -2008 </a> &emsp;Account not active  &emsp;<br>\
+            \ <a href=\"\"> -2009 </a> &emsp;Account locked  &emsp;<br> <a href=\"\
+            \"> -2010 </a> &emsp;Account temporarily disabled  &emsp;<br> <a href=\"\
+            \"> -2017 </a> &emsp;Account lock enabled  &emsp;<br> <a href=\"\"> -2038\
+            \ </a> &emsp;Account lockdown activated  &emsp;<br> <a href=\"\"> -2035\
+            \ </a> &emsp;Challenge cancelled error</p>"
+        "500":
+          content:
+            application/json; charset=utf-8:
+              examples:
+                Internal Error:
+                  description: Internal Error
+                  value: "{ \n\"id\":< Our reference >,\n\"utctime\":<UTC Timestamp>,\n\
+                    \"status\":500,\n\"code\":5000,\n\"message\":\"INTERNAL ERROR:-\
+                    \ AN INTERNAL ERROR OCCURRED\"\n\"moreinfo\":\"https://support.gridy.io/error?code=5000\"\
+                    \ \n}"
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: Internal Error - Your Gridy ID API request was rejected due
+            to an Internal error.
+      summary: Send or Cancel a Gridy ID MFA challenge request.
+      tags:
+      - Gridy ID Service
+      x-content-type: application/json; charset=utf-8
+      x-accepts:
+      - application/json; charset=utf-8
+  /v1/svc/status:
+    post:
+      operationId: status
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/ApiRequest'
+        description: The JSON body of the request. Contains the Status request.
+        required: true
+      responses:
+        "200":
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: OK
+        "204":
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: No Content
+        "400":
+          content:
+            application/json; charset=utf-8:
+              examples:
+                Bad Request:
+                  description: Bad Request
+                  value: "{ \n\"id\":< Our reference >,\n\"utctime\":<UTC Timestamp>,\n\
+                    \"status\":400,\n\"code\":<error code>,\n\"message\":<error message>\n\
+                    \"moreinfo\":\"https://support.gridy.io/error?code=<error code>\"\
+                    \ \n}"
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: "<p style=\"font-family: 'Montserrat'; font-size: 15px;\">\
+            \ Bad Request - Your Gridy ID API request was rejected. </p><p style=\"\
+            font-family: 'Montserrat'; font-size: 14px;\"> See list of all API status\
+            \ codes below: </p><p style=\"font-family: 'Montserrat'; font-size: 13px;\"\
+            >   &emsp;<br> <a href=\"\"> -4004 </a> &emsp;HTTP Header x-gridy-utctime\
+            \ missing  &emsp;<br> <a href=\"\"> -4005 </a> &emsp;HTTP Header x-gridy-utctime\
+            \ format error  &emsp;<br> <a href=\"\"> -4006 </a> &emsp;HTTP Header\
+            \ x-gridy-nonce missing  &emsp;<br> <a href=\"\"> -4007 </a> &emsp;HTTP\
+            \ Header x-gridy-nonce format error  &emsp;<br> <a href=\"\"> -4008 </a>\
+            \ &emsp;HTTP Header x-gridy-apiuser missing error  &emsp;<br> <a href=\"\
+            \"> -4009 </a> &emsp;HTTP Header x-gridy-apiuser format error  &emsp;<br>\
+            \ <a href=\"\"> -4000 </a> &emsp;HTTP Authorization Header missing  &emsp;<br>\
+            \ <a href=\"\"> -4001 </a> &emsp;HTTP Authorization Header format error\
+            \  &emsp;<br> <a href=\"\"> -4026 </a> &emsp;HTTP Authorization Header\
+            \ HMAC signature missing  &emsp;<br> <a href=\"\"> -4027 </a> &emsp;HTTP\
+            \ Authorization Header HMAC signature format error  &emsp;<br> <a href=\"\
+            \"> -4028 </a> &emsp;HTTP Authorization Header HMAC apiuser missing error\
+            \  &emsp;<br> <a href=\"\"> -4029 </a> &emsp;HTTP Authorization Header\
+            \ HMAC apiuser format error  &emsp;<br> <a href=\"\"> -4030 </a> &emsp;HTTP\
+            \ Authorization Header HMAC algorithm missing error  &emsp;<br> <a href=\"\
+            \"> -4031 </a> &emsp;HTTP Authorization Header HMAC algorithm format error\
+            \  &emsp;<br> <a href=\"\"> -4032 </a> &emsp;HTTP Authorization Header\
+            \ HMAC headers missing error  &emsp;<br> <a href=\"\"> -4033 </a> &emsp;HTTP\
+            \ Authorization Header HMAC headers format error  &emsp;<br> <a href=\"\
+            \"> -4034 </a> &emsp;HTTP Authorization Header HMAC nonce reused error\
+            \  &emsp;<br> <a href=\"\"> -4035 </a> &emsp;HTTP Authorization Header\
+            \ HMAC timestamp reused error  &emsp;<br> <a href=\"\"> -4036 </a> &emsp;HTTP\
+            \ Authorization Header HMAC utctime clock drift error  &emsp;<br> <a href=\"\
+            \"> -4037 </a> &emsp;HTTP Authorization Header HMAC signature error  &emsp;<br>\
+            \ <a href=\"\"> -1001 </a> &emsp;API User validation error  &emsp;<br>\
+            \ <a href=\"\"> -1003 </a> &emsp;API User validation error  &emsp;<br>\
+            \ <a href=\"\"> -1026 </a> &emsp;API User permissions error  &emsp;<br>\
+            \ <a href=\"\"> -6021 </a> &emsp;API request blocked - IP address location\
+            \ blocked based on user defined rules  &emsp;<br> <a href=\"\"> -2003\
+            \ </a> &emsp;Account validation error  &emsp;<br> <a href=\"\"> -2004\
+            \ </a> &emsp;Account blocked  &emsp;<br> <a href=\"\"> -2005 </a> &emsp;Account\
+            \ too many failed attempts  &emsp;<br> <a href=\"\"> -2006 </a> &emsp;Account\
+            \ locked  &emsp;<br> <a href=\"\"> -2007 </a> &emsp;Account disabled \
+            \ &emsp;<br> <a href=\"\"> -2008 </a> &emsp;Account not active  &emsp;<br>\
+            \ <a href=\"\"> -2009 </a> &emsp;Account locked  &emsp;<br> <a href=\"\
+            \"> -2010 </a> &emsp;Account temporarily disabled  &emsp;<br> <a href=\"\
+            \"> -2017 </a> &emsp;Account lock enabled  &emsp;<br> <a href=\"\"> -2038\
+            \ </a> &emsp;Account lockdown activated  &emsp;<br> <a href=\"\"> -2035\
+            \ </a> &emsp;Challenge cancelled error</p>"
+        "404":
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: Not Found
+        "500":
+          content:
+            application/json; charset=utf-8:
+              examples:
+                Internal Server Error:
+                  description: Internal Server Error
+                  value: "{ \n\"id\":< Our reference >,\n\"utctime\":<UTC Timestamp>,\n\
+                    \"status\":500,\n\"code\":5000,\n\"message\":\"INTERNAL ERROR:-\
+                    \ AN INTERNAL ERROR OCCURRED\" \n\"moreinfo\":\"https://support.gridy.io/error?code=5000\"\
+                    \ \n}"
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: Internal Error - Your Gridy ID API request was rejected due
+            to an Internal error.
+      summary: Check a Gridy ID MFA challenge status
+      tags:
+      - Gridy ID Service
+      x-content-type: application/json; charset=utf-8
+      x-accepts:
+      - application/json; charset=utf-8
+  /v1/svc/time:
+    get:
+      operationId: time
+      responses:
+        "200":
+          content:
+            application/json; charset=utf-8:
+              examples:
+                OK:
+                  description: OK
+                  value: "{ \n\"id\":< Our reference >,\n\"utctime\":<UTC Timestamp>,\n\
+                    \"status\":200,\n\"code\":15000,\n\"message\":\"{\"utc-time\"\
+                    :\"1729273080\"}\",\n\"moreinfo\":\"https://support.gridy.io/status?code=15000\"\
+                    \ \n}"
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: OK
+        "400":
+          content:
+            application/json; charset=utf-8:
+              examples:
+                Bad Request:
+                  description: Bad Request
+                  value: "{ \n\"id\":< Our reference >,\n\"utctime\":<UTC Timestamp>,\n\
+                    \"status\":400,\n\"code\":<error code>,\n\"message\":{ \n <error\
+                    \ message> \n}\n\"moreinfo\":\"https://support.gridy.io/error?code=<error\
+                    \ code>\" \n}"
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: "<p style=\"font-family: 'Montserrat'; font-size: 15px;\">\
+            \ Bad Request - Your Gridy ID API request was rejected. </p><p style=\"\
+            font-family: 'Montserrat'; font-size: 14px;\"> See list of all API status\
+            \ codes below:</p><p style=\"font-family: 'Montserrat'; font-size: 13px;\"\
+            >   &emsp;<br> <a href=\"\"> -4004 </a> &emsp;HTTP Header x-gridy-utctime\
+            \ missing  &emsp;<br> <a href=\"\"> -4005 </a> &emsp;HTTP Header x-gridy-utctime\
+            \ format error  &emsp;<br> <a href=\"\"> -4006 </a> &emsp;HTTP Header\
+            \ x-gridy-nonce missing  &emsp;<br> <a href=\"\"> -4007 </a> &emsp;HTTP\
+            \ Header x-gridy-nonce format error  &emsp;<br> <a href=\"\"> -4008 </a>\
+            \ &emsp;HTTP Header x-gridy-apiuser missing error  &emsp;<br> <a href=\"\
+            \"> -4009 </a> &emsp;HTTP Header x-gridy-apiuser format error  &emsp;<br>\
+            \ <a href=\"\"> -4000 </a> &emsp;HTTP Authorization Header missing  &emsp;<br>\
+            \ <a href=\"\"> -4001 </a> &emsp;HTTP Authorization Header format error\
+            \  &emsp;<br> <a href=\"\"> -4026 </a> &emsp;HTTP Authorization Header\
+            \ HMAC signature missing  &emsp;<br> <a href=\"\"> -4027 </a> &emsp;HTTP\
+            \ Authorization Header HMAC signature format error  &emsp;<br> <a href=\"\
+            \"> -4028 </a> &emsp;HTTP Authorization Header HMAC apiuser missing error\
+            \  &emsp;<br> <a href=\"\"> -4029 </a> &emsp;HTTP Authorization Header\
+            \ HMAC apiuser format error  &emsp;<br> <a href=\"\"> -4030 </a> &emsp;HTTP\
+            \ Authorization Header HMAC algorithm missing error  &emsp;<br> <a href=\"\
+            \"> -4031 </a> &emsp;HTTP Authorization Header HMAC algorithm format error\
+            \  &emsp;<br> <a href=\"\"> -4032 </a> &emsp;HTTP Authorization Header\
+            \ HMAC headers missing error  &emsp;<br> <a href=\"\"> -4033 </a> &emsp;HTTP\
+            \ Authorization Header HMAC headers format error  &emsp;<br> <a href=\"\
+            \"> -4034 </a> &emsp;HTTP Authorization Header HMAC nonce reused error\
+            \  &emsp;<br> <a href=\"\"> -4035 </a> &emsp;HTTP Authorization Header\
+            \ HMAC timestamp reused error  &emsp;<br> <a href=\"\"> -4036 </a> &emsp;HTTP\
+            \ Authorization Header HMAC utctime clock drift error  &emsp;<br> <a href=\"\
+            \"> -4037 </a> &emsp;HTTP Authorization Header HMAC signature error  &emsp;<br>\
+            \ <a href=\"\"> -1001 </a> &emsp;API User validation error  &emsp;<br>\
+            \ <a href=\"\"> -1003 </a> &emsp;API User validation error  &emsp;<br>\
+            \ <a href=\"\"> -1026 </a> &emsp;API User permissions error  &emsp;<br>\
+            \ <a href=\"\"> -6021 </a> &emsp;API request blocked - IP address location\
+            \ blocked based on user defined rules  &emsp;<br> <a href=\"\"> -2003\
+            \ </a> &emsp;Account validation error  &emsp;<br> <a href=\"\"> -2004\
+            \ </a> &emsp;Account blocked  &emsp;<br> <a href=\"\"> -2005 </a> &emsp;Account\
+            \ too many failed attempts  &emsp;<br> <a href=\"\"> -2006 </a> &emsp;Account\
+            \ locked  &emsp;<br> <a href=\"\"> -2007 </a> &emsp;Account disabled \
+            \ &emsp;<br> <a href=\"\"> -2008 </a> &emsp;Account not active  &emsp;<br>\
+            \ <a href=\"\"> -2009 </a> &emsp;Account locked  &emsp;<br> <a href=\"\
+            \"> -2010 </a> &emsp;Account temporarily disabled  &emsp;<br> <a href=\"\
+            \"> -2017 </a> &emsp;Account lock enabled  &emsp;<br> <a href=\"\"> -2038\
+            \ </a> &emsp;Account lockdown activated  &emsp;<br> <a href=\"\"> -2035\
+            \ </a> &emsp;Challenge cancelled error</p>"
+        "500":
+          content:
+            application/json; charset=utf-8:
+              examples:
+                Internal Server Error:
+                  description: Internal Server Error
+                  value: "{ \n\"id\":< Our reference >,\n\"utctime\":<UTC Timestamp>,\n\
+                    \"status\":500,\n\"code\":5000,\n\"message\":\"INTERNAL ERROR:-\
+                    \ AN INTERNAL ERROR OCCURRED\"\n\"moreinfo\":\"https://support.gridy.io/error?code=5000\"\
+                    \ \n}"
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: Internal Error - Your Gridy ID API request was rejected due
+            to an Internal error.
+      summary: Get current UTC time
+      tags:
+      - Gridy ID Service
+      x-accepts:
+      - application/json; charset=utf-8
+  /v1/svc/verify:
+    post:
+      operationId: verify
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            examples:
+              Verify:
+                description: Verify
+                summary: Verify Authentication Code
+                value: "{ \n\"id\":< Your own reference >,\n\"utctime\": <UTC Timestamp>,\n\
+                  \"apiUser\":< Your Api User ID >,\n\"type\":170,\n\"body\":{  \n\
+                  \"authCode\":\"<User Input Auth Code>\", \n\"challengeId\":<Your\
+                  \ ChallengeID>,\n\"gridyUser\":\"<User Email Address>\"\
+                  ,\n\"verifyType\":\"MANUAL\",\n\"expiry\":\"ThreeMins\",\n\"status\"\
+                  :\"NEW\"  }\n }"
+            schema:
+              $ref: '#/components/schemas/ApiRequest'
+        description: The JSON body of the request. Contains the Gridy ID Verify request.
+        required: true
+      responses:
+        "200":
+          content:
+            application/json; charset=utf-8:
+              examples:
+                Verification Success:
+                  description: Verification Success
+                  summary: Verified
+                  value: "{ \n\"id\":< Our reference >,\n \"utctime\":<UTC Timestamp>,\n\
+                    \ \"status\":200,\n \"code\":3080,\n \"message\":\"{ \n \"challengeId\"\
+                    :\"<User Gridy Challenge ID>\",\n \"verificationCode\":\"<>\"\
+                    ,\n \"profile\":[\"{ <> }\"],\n \"status\":\"VERIFIED\"}\"}\n\
+                    \ \"moreinfo\":\"https://support.gridy.io/status?code=3080\" \n\
+                    }"
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: OK
+        "400":
+          content:
+            application/json; charset=utf-8:
+              examples:
+                Verification Failed:
+                  description: Verification Failed
+                  value: "{ \n \"id\":< Our reference >,\n \"utctime\":<UTC Timestamp>,\n\
+                    \ \"status\":400,\n \"code\":-3087,\n \"message\":\"BAD REQUEST\
+                    \ :- CHALLENGE AUTHCODE VERIFICATION ERROR\"\n \"moreinfo\":\"\
+                    https://support.gridy.io/error?code=-3087\" \n}"
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: "<p style=\"font-family: 'Montserrat'; font-size: 15px;\">\
+            \ Bad Request - Your Gridy ID API request was rejected. </p><p style=\"\
+            font-family: 'Montserrat'; font-size: 14px;\"> See list of all API status\
+            \ codes below: </p><p style=\"font-family: 'Montserrat'; font-size: 13px;\"\
+            >   &emsp;<br> <a href=\"\"> -4004 </a> &emsp;HTTP Header x-gridy-utctime\
+            \ missing  &emsp;<br> <a href=\"\"> -4005 </a> &emsp;HTTP Header x-gridy-utctime\
+            \ format error  &emsp;<br> <a href=\"\"> -4006 </a> &emsp;HTTP Header\
+            \ x-gridy-nonce missing  &emsp;<br> <a href=\"\"> -4007 </a> &emsp;HTTP\
+            \ Header x-gridy-nonce format error  &emsp;<br> <a href=\"\"> -4008 </a>\
+            \ &emsp;HTTP Header x-gridy-apiuser missing error  &emsp;<br> <a href=\"\
+            \"> -4009 </a> &emsp;HTTP Header x-gridy-apiuser format error  &emsp;<br>\
+            \ <a href=\"\"> -4000 </a> &emsp;HTTP Authorization Header missing  &emsp;<br>\
+            \ <a href=\"\"> -4001 </a> &emsp;HTTP Authorization Header format error\
+            \  &emsp;<br> <a href=\"\"> -4026 </a> &emsp;HTTP Authorization Header\
+            \ HMAC signature missing  &emsp;<br> <a href=\"\"> -4027 </a> &emsp;HTTP\
+            \ Authorization Header HMAC signature format error  &emsp;<br> <a href=\"\
+            \"> -4028 </a> &emsp;HTTP Authorization Header HMAC apiuser missing error\
+            \  &emsp;<br> <a href=\"\"> -4029 </a> &emsp;HTTP Authorization Header\
+            \ HMAC apiuser format error  &emsp;<br> <a href=\"\"> -4030 </a> &emsp;HTTP\
+            \ Authorization Header HMAC algorithm missing error  &emsp;<br> <a href=\"\
+            \"> -4031 </a> &emsp;HTTP Authorization Header HMAC algorithm format error\
+            \  &emsp;<br> <a href=\"\"> -4032 </a> &emsp;HTTP Authorization Header\
+            \ HMAC headers missing error  &emsp;<br> <a href=\"\"> -4033 </a> &emsp;HTTP\
+            \ Authorization Header HMAC headers format error  &emsp;<br> <a href=\"\
+            \"> -4034 </a> &emsp;HTTP Authorization Header HMAC nonce reused error\
+            \  &emsp;<br> <a href=\"\"> -4035 </a> &emsp;HTTP Authorization Header\
+            \ HMAC timestamp reused error  &emsp;<br> <a href=\"\"> -4036 </a> &emsp;HTTP\
+            \ Authorization Header HMAC utctime clock drift error  &emsp;<br> <a href=\"\
+            \"> -4037 </a> &emsp;HTTP Authorization Header HMAC signature error  &emsp;<br>\
+            \ <a href=\"\"> -1001 </a> &emsp;API User validation error  &emsp;<br>\
+            \ <a href=\"\"> -1003 </a> &emsp;API User validation error  &emsp;<br>\
+            \ <a href=\"\"> -1026 </a> &emsp;API User permissions error  &emsp;<br>\
+            \ <a href=\"\"> -6021 </a> &emsp;API request blocked - IP address location\
+            \ blocked based on user defined rules  &emsp;<br> <a href=\"\"> -2003\
+            \ </a> &emsp;Account validation error  &emsp;<br> <a href=\"\"> -2004\
+            \ </a> &emsp;Account blocked  &emsp;<br> <a href=\"\"> -2005 </a> &emsp;Account\
+            \ too many failed attempts  &emsp;<br> <a href=\"\"> -2006 </a> &emsp;Account\
+            \ locked  &emsp;<br> <a href=\"\"> -2007 </a> &emsp;Account disabled \
+            \ &emsp;<br> <a href=\"\"> -2008 </a> &emsp;Account not active  &emsp;<br>\
+            \ <a href=\"\"> -2009 </a> &emsp;Account locked  &emsp;<br> <a href=\"\
+            \"> -2010 </a> &emsp;Account temporarily disabled  &emsp;<br> <a href=\"\
+            \"> -2017 </a> &emsp;Account lock enabled  &emsp;<br> <a href=\"\"> -2038\
+            \ </a> &emsp;Account lockdown activated  &emsp;<br> <a href=\"\"> -2035\
+            \ </a> &emsp;Challenge cancelled error  &emsp;<br> <a href=\"\"> -3081\
+            \ </a> &emsp;Verify code expired error  &emsp;<br> <a href=\"\"> -3081\
+            \ </a> &emsp;Verify challenge id match error  &emsp;<br> <a href=\"\"\
+            > -3082 </a> &emsp;Verify challenge expired error  &emsp;<br> <a href=\"\
+            \"> -3088 </a> &emsp;Verify challenge already verified error  &emsp;<br>\
+            \ <a href=\"\"> -3089 </a> &emsp;Verify challenge already authenticated\
+            \ error</p>"
+        "500":
+          content:
+            application/json; charset=utf-8:
+              examples:
+                Internal Server Error:
+                  description: Internal Server Error
+                  value: "{ \n \"id\":< Our reference >,\n \"utctime\":<UTC Timestamp>,\n\
+                    \ \"status\":500,\n \"code\":5000,\n \"message\":{ \n \"INTERNAL\
+                    \ ERROR:- AN INTERNAL ERROR OCCURRED\" \n }\n \"moreinfo\":\"\
+                    https://support.gridy.io/error?code=5000\" \n}"
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+          description: Internal Error - Your Gridy ID API request was rejected due
+            to an Internal error.
+      summary: Verify a Gridy ID authentication code
+      tags:
+      - Gridy ID Service
+      x-content-type: application/json; charset=utf-8
+      x-accepts:
+      - application/json; charset=utf-8
+components:
+  schemas:
+    ApiResponse:
+      example:
+        code: 6
+        utcTime: utcTime
+        id: id
+        message: message
+        moreInfo: moreInfo
+        status: 0
+      properties:
+        id:
+          type: string
+        utcTime:
+          type: string
+        status:
+          format: int32
+          type: integer
+        message:
+          type: string
+        code:
+          format: int32
+          type: integer
+        moreInfo:
+          type: string
+      required:
+      - code
+      - id
+      - message
+      - status
+      - utcTime
+      type: object
+    ApiRequest:
+      example:
+        utcTime: utcTime
+        id: id
+        type: 0
+        body: body
+        apiUser: apiUser
+      properties:
+        id:
+          type: string
+        utcTime:
+          type: string
+        apiUser:
+          type: string
+        type:
+          format: int32
+          type: integer
+        body:
+          type: string
+      required:
+      - apiUser
+      - body
+      - id
+      - type
+      - utcTime
+      type: object
+  securitySchemes:
+    x-gridy-apiuser:
+      in: header
+      name: x-gridy-apiuser
+      type: apiKey
+    x-gridy-cnonce:
+      in: header
+      name: x-gridy-cnonce
+      type: apiKey
+    x-gridy-utctime:
+      in: header
+      name: x-gridy-utctime
+      type: apiKey
+    GridyHmacAuth:
+      description: "Gridy HMAC athentication \n\n The HMAC signature is passed in\
+        \ the **Authorization** header in the following format: `Authorization: gridy-hmac:\
+        \ apiuser=000000000,signedheaders=x-gridy-utctime;x-gridy-cnonce,algorithm=gridy-hmac512,signature=7b7750f74a2b5676f0f88da46cd1a61d6b1b638fcaa70b95e3b04225978bfb8f\n\
+        re=7aae73e2c3df62766cad5b38ce0e080890aa6d361248b516d0596f7a9424383b21fa2d44798f145cb4a32f87fcd3b27a8ff31c2a2e93b6c7ec35ed063619efb2"
+      in: header
+      name: Authorization
+      type: apiKey
+

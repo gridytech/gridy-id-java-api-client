@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"io.gridy.client"},{"l":"io.gridy.client.api"},{"l":"io.gridy.client.auth"},{"l":"io.gridy.client.model"},{"l":"io.gridy.utils"}]
