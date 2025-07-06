@@ -1,8 +1,8 @@
-# gridy-id-java-client
+# gridy-id-java-api-client
 
 Gridy ID is a Multi-Factor authentication (MFA) API service & Authenticator application for Android, IOS, Windows, MacOS, Linux & Web.
 
-Use Gridy to replace your existing username/password authentication or Integrate Gridy ID into your adaptive authentication workflow inminutes using our API service and clients
+Use Gridy ID to replace your existing username/password authentication or Integrate Gridy ID into your adaptive authentication workflow in minutes using our API service and clients
 
 
 ## Requirements
@@ -26,7 +26,7 @@ Add this dependency to your project's POM:
 ```xml
 <dependency>
   <groupId>io.gridy</groupId>
-  <artifactId>gridy-id-java-client</artifactId>
+  <artifactId>gridy-id-java-api-client</artifactId>
   <version>0.5.0</version>
   <scope>compile</scope>
 </dependency>
@@ -38,12 +38,12 @@ Add this dependency to your project's build file:
 
 ```groovy
   repositories {
-    mavenCentral()     // Needed if the 'gridy-id-java-client' jar has been published to maven central.
-    mavenLocal()       // Needed if the 'gridy-id-java-client' jar has been published to the local maven repo.
+    mavenCentral()     // Needed if the 'gridy-id-java-api-client' jar has been published to maven central.
+    mavenLocal()       // Needed if the 'gridy-id-java-api-client' jar has been published to the local maven repo.
   }
 
   dependencies {
-     implementation "io.gridy:gridy-id-java-client:0.5.0"
+     implementation "io.gridy:gridy-id-java-api-client:0.5.0"
   }
 ```
 
@@ -57,7 +57,7 @@ mvn clean package
 
 Then manually install the following JARs:
 
-* `target/gridy-java-client-0.5.0.jar`
+* `target/gridy-java-api-client-0.5.0.jar`
 * `target/lib/*.jar`
 
 ## Getting Started
@@ -121,7 +121,7 @@ Please follow the [installation](#installation) instruction and execute the foll
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://api.gridy.io*
+All URIs are relative to *https://api.gridy.io/prod*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
