@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 # gridy-id-java-client
 
 Gridy ID is a Multi-Factor authentication (MFA) API service & Authenticator application for Android, IOS, Windows, MacOS, Linux & Web.
@@ -178,13 +176,3 @@ It's recommended to create an instance of `ApiClient` per thread in a multithrea
 
 ## Author
 Gridy.io
-
-
-=======
-# gridy-id-java-api-client
-Gridy ID API Java client
->>>>>>> 4040ef205364bfd3ba2c2ce4b5da417c5985551a
-=======
-# gridy-id-java-api-client
-Gridy ID API Java client
->>>>>>> 4040ef205364bfd3ba2c2ce4b5da417c5985551a
