@@ -145,25 +145,25 @@ Class | Method | HTTP request | Description
 
 ### x-gridy-apiuser
 
-- **Type**: Hmac512
+- **Type**: GRIDY-HMAC
 - **parameter name**: x-gridy-apiuser
 - **Location**: HTTP header
 
 ### x-gridy-cnonce
 
-- **Type**: Hmac512
+- **Type**: GRIDY-HMAC
 - **parameter name**: x-gridy-cnonce
 - **Location**: HTTP header
 
 ### x-gridy-utctime
 
-- **Type**:  Hmac512
+- **Type**:  GRIDY-HMAC
 - **parameter name**: x-gridy-utctime
 - **Location**: HTTP header
 
 ### GridyHmacAuth
 
-- **Type**: Hmac512
+- **Type**: GRIDY-HMAC
 - **parameter name**: Authorization
 - **Location**: HTTP header
 
